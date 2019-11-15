@@ -43,6 +43,10 @@ RCT_EXPORT_MODULE();
   return YES;
 }
 
+- (NSArray<NSString *> *)supportedEvents {
+    return @[AudioRecorderEventProgress,AudioRecorderEventFinished];
+}
+
 - (void)sendProgressUpdate {
   if (_audioRecorder && _audioRecorder.isRecording) {
     _currentTime = _audioRecorder.currentTime;
@@ -62,7 +66,8 @@ RCT_EXPORT_MODULE();
           float _currentPeakMetering = [_audioRecorder peakPowerForChannel:0];
           [body setObject:[NSNumber numberWithFloat:_currentPeakMetering] forKey:@"currentPeakMetering"];
       }
-      [self.bridge.eventDispatcher sendAppEventWithName:AudioRecorderEventProgress body:body];
+//      [self.bridge.eventDispatcher sendAppEventWithName:AudioRecorderEventProgress body:body];
+      [self sendEventWithName:AudioRecorderEventProgress body:body];
 
     _prevProgressUpdateTime = [NSDate date];
   }
@@ -91,7 +96,14 @@ RCT_EXPORT_MODULE();
     uint64_t audioFileSize = 0;
     audioFileSize = [[[NSFileManager defaultManager] attributesOfItemAtPath:[_audioFileURL path] error:nil] fileSize];
   
-  [self.bridge.eventDispatcher sendAppEventWithName:AudioRecorderEventFinished body:@{
+//  [self.bridge.eventDispatcher sendAppEventWithName:AudioRecorderEventFinished body:@{
+//      @"base64":base64,
+//      @"duration":@(_currentTime),
+//      @"status": flag ? @"OK" : @"ERROR",
+//      @"audioFileURL": [_audioFileURL absoluteString],
+//      @"audioFileSize": @(audioFileSize)
+//    }];
+    [self sendEventWithName:AudioRecorderEventFinished body:@{
       @"base64":base64,
       @"duration":@(_currentTime),
       @"status": flag ? @"OK" : @"ERROR",
