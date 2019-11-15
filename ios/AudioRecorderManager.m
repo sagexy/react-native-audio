@@ -43,6 +43,10 @@ RCT_EXPORT_MODULE();
   return YES;
 }
 
+- (NSArray<NSString *> *)supportedEvents {
+    return @[AudioRecorderEventProgress,AudioRecorderEventFinished];
+}
+
 - (void)sendProgressUpdate {
   if (_audioRecorder && _audioRecorder.isRecording) {
     _currentTime = _audioRecorder.currentTime;
